@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.agent-test-target/
+*.agent-team-new
+
+.idea/

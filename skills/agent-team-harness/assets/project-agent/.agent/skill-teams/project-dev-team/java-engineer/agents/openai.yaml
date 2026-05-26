@@ -1,0 +1,8 @@
+interface:
+  display_name: "Java Engineer"
+  short_description: "实现既定架构下的 Java 业务代码"
+  default_prompt: "Use $java-engineer to implement Java code under an existing architecture, with clear layering, Chinese comments where needed, explicit transaction boundaries, exception handling, and thread-safety notes."
+execution:
+  model: "MODEL_STRONGEST_AVAILABLE"
+  reasoning_effort: "xhigh"
+  routing_reason: "Production Java implementation uses the strongest available project model."

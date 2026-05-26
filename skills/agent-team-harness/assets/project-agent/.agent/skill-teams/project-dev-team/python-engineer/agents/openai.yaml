@@ -1,0 +1,8 @@
+interface:
+  display_name: "Python Engineer"
+  short_description: "实现既定架构下的 Python 生产代码"
+  default_prompt: "Use $python-engineer to implement Python code under an existing architecture, with type annotations, clear package boundaries, explicit error handling, and test coverage for risky paths."
+execution:
+  model: "MODEL_STRONGEST_AVAILABLE"
+  reasoning_effort: "xhigh"
+  routing_reason: "Production Python implementation uses the strongest available project model."

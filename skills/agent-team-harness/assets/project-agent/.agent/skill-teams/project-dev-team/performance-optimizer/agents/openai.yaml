@@ -1,0 +1,8 @@
+interface:
+  display_name: "Performance Optimizer"
+  short_description: "高并发系统性能分析与容量评估"
+  default_prompt: "Use $performance-optimizer to analyze high-concurrency performance risks, estimate QPS capacity, identify bottlenecks, and propose cache, batching, async, and traffic-shaping optimizations."
+execution:
+  model: "MODEL_REASONING_AVAILABLE"
+  reasoning_effort: "high"
+  routing_reason: "Performance analysis uses a strong reasoning model unless project routing overrides it."

@@ -1,0 +1,8 @@
+interface:
+  display_name: "QA Tester"
+  short_description: "Designs tests, classifies defects, and validates releases"
+  default_prompt: "Use $qa-tester to design test cases, classify defects, and verify release readiness for the target project's supported languages."
+execution:
+  model: "MODEL_BALANCED_AVAILABLE"
+  reasoning_effort: "medium"
+  routing_reason: "QA verification uses the balanced project model unless risk requires escalation."

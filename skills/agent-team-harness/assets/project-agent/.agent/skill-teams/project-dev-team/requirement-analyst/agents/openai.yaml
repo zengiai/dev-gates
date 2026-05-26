@@ -1,0 +1,8 @@
+interface:
+  display_name: "Requirement Analyst"
+  short_description: "Clarifies scope, ambiguity, and acceptance criteria"
+  default_prompt: "Use $requirement-analyst to analyze ambiguous requirements, compare options, and define acceptance criteria."
+execution:
+  model: "MODEL_BALANCED_AVAILABLE"
+  reasoning_effort: "medium"
+  routing_reason: "Requirement analysis uses the balanced project model."

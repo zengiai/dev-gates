@@ -1,0 +1,8 @@
+interface:
+  display_name: "Frontend Engineer"
+  short_description: "实现既定设计下的前端生产代码"
+  default_prompt: "Use $frontend-engineer to implement frontend code under an existing design system, with TypeScript types, full state coverage, responsive layout, and accessibility best practices."
+execution:
+  model: "MODEL_STRONGEST_AVAILABLE"
+  reasoning_effort: "xhigh"
+  routing_reason: "Production frontend implementation uses the strongest available project model."

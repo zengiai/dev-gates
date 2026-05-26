@@ -1,0 +1,8 @@
+interface:
+  display_name: "Go Engineer"
+  short_description: "实现既定架构下的 Go 生产代码"
+  default_prompt: "Use $go-engineer to implement Go code under an existing architecture, with explicit error handling, context propagation, clear concurrency boundaries, and table-driven tests."
+execution:
+  model: "MODEL_STRONGEST_AVAILABLE"
+  reasoning_effort: "xhigh"
+  routing_reason: "Production Go implementation uses the strongest available project model."

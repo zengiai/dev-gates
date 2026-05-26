@@ -1,0 +1,8 @@
+interface:
+  display_name: "Java Architect"
+  short_description: "高并发 Java 架构设计与评审"
+  default_prompt: "Use $java-architect to design or review a Java system before coding, focusing on boundaries, concurrency, idempotency, transactions, cache strategy, risk controls, and architecture trade-offs."
+execution:
+  model: "MODEL_REASONING_AVAILABLE"
+  reasoning_effort: "high"
+  routing_reason: "Architecture design uses a strong reasoning model unless project routing overrides it."

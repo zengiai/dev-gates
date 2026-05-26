@@ -1,0 +1,8 @@
+interface:
+  display_name: "Gate Reviewer"
+  short_description: "Reviews readiness risks before development begins"
+  default_prompt: "Use $gate-reviewer to run a pre-development readiness gate across scope, architecture, data, concurrency, risk, testing, observability, and release."
+execution:
+  model: "MODEL_BALANCED_AVAILABLE"
+  reasoning_effort: "medium"
+  routing_reason: "Gate review uses the balanced project model unless risk requires escalation."

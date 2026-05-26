@@ -1,0 +1,8 @@
+interface:
+  display_name: "PM Orchestrator"
+  short_description: "Coordinates staged delivery across specialist roles"
+  default_prompt: "Use $pm-orchestrator to coordinate a project delivery workflow across requirement, architecture, development, review, and QA stages."
+execution:
+  model: "MODEL_BALANCED_AVAILABLE"
+  reasoning_effort: "medium"
+  routing_reason: "Workflow coordination uses the balanced project model."

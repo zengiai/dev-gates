@@ -1,0 +1,8 @@
+interface:
+  display_name: "Code Reviewer"
+  short_description: "Reviews production code risks"
+  default_prompt: "Use $code-reviewer to review existing code for production risks, design drift, missing requirements, concurrency issues, transaction boundary problems, resource leaks, and test gaps."
+execution:
+  model: "MODEL_STRONGEST_AVAILABLE"
+  reasoning_effort: "xhigh"
+  routing_reason: "Production code review uses the strongest available project model."

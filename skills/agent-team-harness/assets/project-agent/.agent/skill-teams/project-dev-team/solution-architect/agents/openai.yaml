@@ -1,0 +1,8 @@
+interface:
+  display_name: "Solution Architect"
+  short_description: "Designs modules, interfaces, risks, and rollout plans"
+  default_prompt: "Use $solution-architect to design a project solution with modules, interfaces, risks, and implementation boundaries."
+execution:
+  model: "MODEL_REASONING_AVAILABLE"
+  reasoning_effort: "high"
+  routing_reason: "Solution design uses a strong reasoning model unless project routing overrides it."

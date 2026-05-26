@@ -1,0 +1,223 @@
+project:
+  name: __PROJECT_NAME__
+  type: __PROJECT_TYPE__
+  primary_languages:
+    - __PRIMARY_LANGUAGE__
+  priority:
+    - stability
+    - performance
+    - extensibility
+    - elegance
+  initialization:
+    generated_at: __GENERATED_AT__
+    generated_by: agent-team-harness
+    review_required: __REVIEW_REQUIRED__
+
+team_skills:
+  source: agent-team-harness/assets/project-agent/.agent/skill-teams/project-dev-team
+  project_copy: .agent/skill-teams/project-dev-team
+  sync_policy: manual_review_required
+  extension_policy: add language-specific roles under .agent/skill-teams/project-dev-team after review
+
+model_routing:
+  availability_source: __MODEL_AVAILABILITY_SOURCE__
+  review_required: __MODEL_REVIEW_REQUIRED__
+  default:
+    model: __MODEL_BALANCED_AVAILABLE__
+    reasoning_effort: medium
+  implementation:
+    model: __MODEL_STRONGEST_AVAILABLE__
+    reasoning_effort: xhigh
+    roles:
+      - developer-agent
+      - java-engineer
+  code_review:
+    model: __MODEL_STRONGEST_AVAILABLE__
+    reasoning_effort: xhigh
+    roles:
+      - code-reviewer
+  architecture_and_performance:
+    model: __MODEL_REASONING_AVAILABLE__
+    reasoning_effort: high
+    roles:
+      - solution-architect
+      - java-architect
+      - performance-optimizer
+  lightweight_roles:
+    model: __MODEL_BALANCED_AVAILABLE__
+    reasoning_effort: medium
+    roles:
+      - pm-orchestrator
+      - requirement-analyst
+      - gate-reviewer
+      - qa-tester
+  escalation_rule:
+    require_user_reason_for_lightweight_escalation: true
+    escalate_when:
+      - core_path_change
+      - money_or_inventory_consistency
+      - security_or_permission_boundary
+      - high_concurrency_or_capacity_risk
+      - release_blocker
+
+workflow:
+  guard_script: .agent/scripts/workflow_guard.py
+  required_script_gates:
+    init_feature_documents:
+      command: python .agent/scripts/workflow_guard.py init <FeatureSlug>
+      when: before leaving REQUIREMENT_ANALYSIS for any non-trivial requirement
+    init_bugfix_documents:
+      command: python .agent/scripts/workflow_guard.py init <BugSlug> --kind bugfix
+      when: before locating or fixing any non-trivial bug
+    enter_development:
+      command: python .agent/scripts/workflow_guard.py enter <FeatureSlug> DEVELOPMENT
+      when: before production code changes
+    pre_edit:
+      command: python .agent/scripts/workflow_guard.py pre-edit <FeatureSlug> --files <paths>
+      when: immediately before editing production files
+    complete_development:
+      command: python .agent/scripts/workflow_guard.py complete <FeatureSlug> DEVELOPMENT
+      when: before CODE_REVIEW
+    enter_test_verification:
+      command: python .agent/scripts/workflow_guard.py enter <FeatureSlug> TEST_VERIFICATION
+      when: before QA/test verification
+    complete_test_verification:
+      command: python .agent/scripts/workflow_guard.py complete <FeatureSlug> TEST_VERIFICATION
+      when: before DELIVERY_SUMMARY
+    feature_improvement:
+      command: python .agent/scripts/feature_improvement.py <FeatureSlug>
+      when: after a large feature reaches DELIVERY_SUMMARY
+  state_machine:
+    initial: REQUIREMENT_ANALYSIS
+    terminal: DELIVERY_SUMMARY
+    states:
+      REQUIREMENT_ANALYSIS:
+        owner: requirement-analyst
+        document: 01_REQUIREMENT_ANALYSIS.md
+        next:
+          - SOLUTION_DESIGN
+      SOLUTION_DESIGN:
+        owner: solution-architect
+        document: 02_SOLUTION_DESIGN.md
+        next:
+          - GATE_REVIEW
+        rollback:
+          - REQUIREMENT_ANALYSIS
+      GATE_REVIEW:
+        owner: gate-reviewer
+        document: 03_GATE_REVIEW.md
+        next:
+          - DEVELOPMENT
+        rollback:
+          - REQUIREMENT_ANALYSIS
+          - SOLUTION_DESIGN
+      DEVELOPMENT:
+        owner: developer-agent
+        document: 04_DEVELOPMENT.md
+        next:
+          - CODE_REVIEW
+        rollback:
+          - SOLUTION_DESIGN
+      CODE_REVIEW:
+        owner: code-reviewer
+        document: 05_CODE_REVIEW.md
+        next:
+          - TEST_VERIFICATION
+        rollback:
+          - DEVELOPMENT
+      TEST_VERIFICATION:
+        owner: qa-tester
+        document: 06_TEST_REPORT.md
+        next:
+          - DELIVERY_SUMMARY
+        rollback:
+          - DEVELOPMENT
+      DELIVERY_SUMMARY:
+        owner: pm-orchestrator
+        document: 06_TEST_REPORT.md
+        rollback:
+          - REQUIREMENT_ANALYSIS
+          - SOLUTION_DESIGN
+          - DEVELOPMENT
+          - TEST_VERIFICATION
+  hard_rules:
+    gate_blocker: DEVELOPMENT_MUST_NOT_START
+    code_review_must_fix: TEST_VERIFICATION_MUST_NOT_START
+    test_blocker: ROLLBACK_TO_DEVELOPMENT
+    max_consecutive_rollbacks_per_state: 3
+    required_document_update_before_state_completion: true
+
+feature_documents:
+  root: docs/features
+  template_root: .agent/templates/feature-docs
+  slug_style: StableEnglishPascalCase
+  required_files:
+    - 01_REQUIREMENT_ANALYSIS.md
+    - 02_SOLUTION_DESIGN.md
+    - 03_GATE_REVIEW.md
+    - 04_DEVELOPMENT.md
+    - 05_CODE_REVIEW.md
+    - 06_TEST_REPORT.md
+
+code_materials:
+  root: .agent/materials
+  guard_command: python .agent/scripts/workflow_guard.py check-materials
+  required_for_production_code_changes: true
+  project_profile: .agent/materials/project-code-profile.md
+  style_guide: .agent/materials/code-style-guide.md
+  feature_template: .agent/materials/templates/FEATURE_DEVELOPMENT_TEMPLATE.md
+  bugfix_template: .agent/materials/templates/BUGFIX_TEMPLATE.md
+  code_patterns: .agent/materials/templates/LANGUAGE_CODE_PATTERNS.md
+  review_checklist: .agent/materials/checklists/CHANGE_REVIEW_CHECKLIST.md
+  mandatory_before_edit:
+    - affected_call_path
+    - state_transaction_idempotency_boundary
+    - timeout_retry_circuit_breaker_degradation_impact
+    - cache_and_concurrency_impact
+    - audit_metrics_trace_impact
+    - focused_validation_command
+
+write_boundaries:
+  allowed:
+__ALLOWED_WRITE_PATHS__
+  restricted_without_explicit_request:
+    - .git/**
+    - .idea/**
+    - .vscode/**
+    - node_modules/**
+    - target/**
+    - build/**
+    - dist/**
+    - .pytest_cache/**
+    - .env
+    - .env.*
+    - local secrets or credentials
+
+core_path:
+  generated_patterns_file: .agent/generated/core_paths.txt
+  high_risk_modules:
+__CORE_PATHS__
+  required_change_notes:
+    - request_entry_and_call_path
+    - state_or_transaction_boundary
+    - idempotency_strategy
+    - timeout_retry_circuit_breaker_degradation
+    - audit_and_metrics_compatibility
+    - rollback_plan
+
+validation:
+  default_command: __VALIDATION_COMMAND__
+  focused_tests:
+__FOCUSED_TESTS__
+
+self_improvement:
+  after_large_feature:
+    command: python .agent/scripts/feature_improvement.py <FeatureSlug>
+    outputs: .agent/improvements/<FeatureSlug>_IMPROVEMENT.md
+    update_targets:
+      - .agent/materials/**
+      - .agent/templates/**
+      - .agent/rule.md
+      - .agent/skill-teams/project-dev-team/**
+    rule: update reusable team materials only after reviewing feature evidence
+

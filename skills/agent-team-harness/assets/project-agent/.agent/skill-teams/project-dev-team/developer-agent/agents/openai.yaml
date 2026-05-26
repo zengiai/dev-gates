@@ -1,0 +1,8 @@
+interface:
+  display_name: "Developer Agent"
+  short_description: "Implements approved production changes safely"
+  default_prompt: "Use $developer-agent to implement production-ready code for the target project's supported languages from an approved design."
+execution:
+  model: "MODEL_STRONGEST_AVAILABLE"
+  reasoning_effort: "xhigh"
+  routing_reason: "Production code implementation uses the strongest available project model."
