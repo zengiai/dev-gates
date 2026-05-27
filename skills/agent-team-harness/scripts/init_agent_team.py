@@ -113,6 +113,23 @@ CODE_REVIEW_ROLES = {"code-reviewer"}
 REASONING_ROLES = {"solution-architect", "java-architect", "performance-optimizer"}
 BALANCED_ROLES = {"pm-orchestrator", "requirement-analyst", "gate-reviewer", "qa-tester"}
 
+AGENTS_MD_START = "<!-- agent-team-harness:start -->"
+AGENTS_MD_END = "<!-- agent-team-harness:end -->"
+AGENTS_MD_SECTION = f"""{AGENTS_MD_START}
+## Agent Team Harness
+
+When this repository contains `.agent/`, use the project-local Agent Team Harness workflow for non-trivial development, bug fixes, refactors, code reviews, QA verification, production-risk changes, model routing, and delivery summaries.
+
+For relevant work:
+
+- Use `$agent-team-harness` when installing, refreshing, repairing, or operating the `.agent` workflow.
+- Read `.agent/rule.md` and `.agent/harness.yaml` before editing production code.
+- Run or respect `.agent/scripts/workflow_guard.py` stage gates for feature work.
+- Use `.agent/skill-teams/project-dev-team` role guidance for requirement analysis, solution design, gate review, development, code review, QA, and PM orchestration.
+- Treat guard failures as blockers unless the project owner explicitly overrides them.
+{AGENTS_MD_END}
+"""
+
 
 @dataclass(frozen=True)
 class ModelRouting:
@@ -182,6 +199,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         conflict_mode=conflict_mode,
         actions=actions,
     )
+    _update_agents_md(target, dry_run=args.dry_run, actions=actions)
 
     print("Agent team initialization complete" if not args.dry_run else "Agent team initialization dry run")
     print(f"Target: {target}")
@@ -270,6 +288,35 @@ def _safe_write_text(
         return
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(text, encoding="utf-8")
+
+
+def _update_agents_md(target: Path, *, dry_run: bool, actions: list[str]) -> None:
+    """Append or refresh the project-level AGENTS.md integration when present."""
+    path = target / "AGENTS.md"
+    if not path.exists():
+        actions.append(f"skip: {_display(path)} (not found)")
+        return
+    current = path.read_text(encoding="utf-8", errors="ignore")
+    updated = _merge_agents_md_section(current)
+    if updated == current:
+        actions.append(f"unchanged: {_display(path)}")
+        return
+    actions.append(f"write: {_display(path)}")
+    if dry_run:
+        return
+    path.write_text(updated, encoding="utf-8")
+
+
+def _merge_agents_md_section(current: str) -> str:
+    section = AGENTS_MD_SECTION.strip()
+    pattern = re.compile(
+        rf"{re.escape(AGENTS_MD_START)}.*?{re.escape(AGENTS_MD_END)}",
+        re.DOTALL,
+    )
+    if pattern.search(current):
+        return pattern.sub(section, current)
+    separator = "\n\n" if current.rstrip() else ""
+    return f"{current.rstrip()}{separator}{section}\n"
 
 
 def _scan_project(root: Path) -> ProjectScan:
@@ -829,6 +876,8 @@ def _render_source(path: Path, template_path: Path, *, conflict_mode: bool, forc
     if conflict_mode and not force and conflict_path.exists():
         return conflict_path
     if conflict_mode and not force and dry_run and template_path.exists():
+        return template_path
+    if dry_run and not path.exists() and template_path.exists():
         return template_path
     return path
 

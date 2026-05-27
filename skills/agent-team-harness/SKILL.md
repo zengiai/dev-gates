@@ -1,6 +1,6 @@
 ---
 name: agent-team-harness
-description: Initialize, update, and operate a reusable project-local AI development team workflow. Use when Codex needs to install or refresh a `.agent` directory, extract team rules into a reusable project, configure role-specific model routing, bootstrap feature documents, enforce development gates, or improve team materials after a large feature delivery.
+description: Use this skill when the user asks to initialize, install, refresh, repair, migrate, or operate Agent Team Harness, a reusable project-local `.agent` AI development team workflow; configure role-specific model routing; bootstrap requirement/design/development/code-review/QA feature documents; enforce workflow gates; update target AGENTS.md integration; or improve reusable team materials after a feature delivery.
 ---
 
 # Agent Team Harness
@@ -19,7 +19,9 @@ Use this skill to install a reusable `.agent` team workflow into another reposit
 python skills/agent-team-harness/scripts/init_agent_team.py --target /path/to/project --models "model-a,model-b"
 ```
 
-4. Review generated files before starting development:
+4. If the target project already has `AGENTS.md`, the initializer appends or refreshes a managed Agent Team Harness section so future agents know when to use the project-local workflow. It does not create `AGENTS.md` when the file is absent.
+
+5. Review generated files before starting development:
 
 - `.agent/harness.yaml`
 - `.agent/rule.md`
@@ -27,8 +29,9 @@ python skills/agent-team-harness/scripts/init_agent_team.py --target /path/to/pr
 - `.agent/generated/model-routing.md`
 - `.agent/generated/production_paths.txt`
 - `.agent/generated/core_paths.txt`
+- `AGENTS.md` managed section, only when the target already had `AGENTS.md`
 
-5. If the target already has `.agent` files, do not overwrite them silently. Use `--force` only when the user approves replacing local project rules.
+6. If the target already has `.agent` files, do not overwrite them silently. Use `--force` only when the user approves replacing local project rules.
 
 ## Model Routing Rule
 
